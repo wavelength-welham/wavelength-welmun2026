@@ -2,1344 +2,551 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
-  <meta name="theme-color" content="#090909" />
-  <title>Wavelength — Edition 46</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
-
+  <title>Reality Distortion AR – Liquid Glass Flow</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <style>
-    :root {
-      --bg: #090909;
-      --surface: #11110f;
-      --surface-hover: #181713;
-      --text: #f3f0e9;
-      --muted: #918c82;
-      --dim: #514d47;
-      --line: rgba(218, 195, 154, 0.16);
-      --gold: #d4b896;
-      --green: #93bd86;
-      --radius: 15px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      background: var(--bg);
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-width: 320px;
-      min-height: 100vh;
-      overflow-x: hidden;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 85% 5%, rgba(163, 126, 78, 0.1), transparent 28rem),
-        radial-gradient(circle at 7% 90%, rgba(112, 88, 58, 0.07), transparent 25rem),
-        var(--bg);
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      pointer-events: none;
-      opacity: 0.1;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.35'/%3E%3C/svg%3E");
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      border: 0;
-      font: inherit;
-      cursor: pointer;
-    }
-
-    .page {
-      width: min(1180px, calc(100% - 48px));
-      min-height: 100vh;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Header */
-
-    header {
-      min-height: 96px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      min-width: 0;
-    }
-
-    .wavelength-logo {
-      width: auto;
-      height: 42px;
-      max-width: min(270px, 52vw);
-      display: block;
-      object-fit: contain;
-      object-position: left center;
-    }
-
-    .edition {
-      color: var(--muted);
-      font-family: "DM Mono", monospace;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      line-height: 1.5;
-      text-align: right;
-      text-transform: uppercase;
-    }
-
-    /* Hero */
-
-    main {
-      flex: 1;
-      padding: 76px 0 65px;
-    }
-
-    .eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 26px;
-      color: var(--gold);
-      font-family: "DM Mono", monospace;
-      font-size: 10px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 32px;
-      height: 1px;
-      background: currentColor;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(250px, 0.55fr);
-      align-items: end;
-      gap: 72px;
-      margin-bottom: 76px;
-    }
-
-    .hero-title {
-      max-width: 800px;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(3.4rem, 7vw, 6.8rem);
-      font-weight: 500;
-      letter-spacing: -0.065em;
-      line-height: 0.94;
-    }
-
-    .hero-title em {
-      color: var(--gold);
-      font-style: italic;
-      font-weight: 500;
-    }
-
-    .hero-copy {
-      max-width: 360px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.85;
-    }
-
-    .hero-copy strong {
-      color: #d4cec3;
-      font-weight: 500;
-    }
-
-    /* Experiences */
-
-    .experiences {
-      border-top: 1px solid var(--line);
-    }
-
-    .section-label {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 16px 0;
-      color: var(--dim);
-      font-family: "DM Mono", monospace;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .experience-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    /*
-      Shared card system:
-      All cards have exactly the same charcoal base.
-      Only the small accent colour changes.
-    */
-
-    .experience-card {
-      --accent: #d4b896;
-      --accent-light: #f0d5ad;
-      --accent-rgb: 212, 184, 150;
-
-      min-height: 330px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 27px;
-      overflow: hidden;
-      border: 1px solid rgba(var(--accent-rgb), 0.23);
-      border-radius: var(--radius);
-      background:
-        radial-gradient(
-          circle at 86% 8%,
-          rgba(var(--accent-rgb), 0.075),
-          transparent 12rem
-        ),
-        var(--surface);
-      color: var(--text);
-      text-align: left;
-      transition:
-        transform 0.3s ease,
-        border-color 0.3s ease,
-        background 0.3s ease,
-        box-shadow 0.3s ease;
-    }
-
-    .experience-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(var(--accent-rgb), 0.58);
-      background:
-        radial-gradient(
-          circle at 86% 8%,
-          rgba(var(--accent-rgb), 0.12),
-          transparent 13rem
-        ),
-        var(--surface-hover);
-      box-shadow: 0 18px 45px rgba(var(--accent-rgb), 0.06);
-    }
-
-    .experience-card::after {
-      content: "";
-      width: 180px;
-      height: 180px;
-      position: absolute;
-      right: -70px;
-      bottom: -92px;
-      border: 1px solid rgba(var(--accent-rgb), 0.16);
-      border-radius: 50%;
-      transition: transform 0.45s ease;
-    }
-
-    .experience-card:hover::after {
-      transform: scale(1.2);
-    }
-
-    .blast-miner-card {
-      --accent: #e0a85b;
-      --accent-light: #f7d09a;
-      --accent-rgb: 224, 168, 91;
-    }
-
-    .reality-card {
-      --accent: #76b8d8;
-      --accent-light: #bae7fa;
-      --accent-rgb: 118, 184, 216;
-    }
-
-    .instants-card {
-      --accent: #bd8ce5;
-      --accent-light: #e4c9fa;
-      --accent-rgb: 189, 140, 229;
-    }
-
-    .card-top {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .card-number {
-      color: var(--accent);
-      font-family: "DM Mono", monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-    }
-
-    .card-type {
-      color: rgba(var(--accent-rgb), 0.55);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-      letter-spacing: 0.08em;
-      text-align: right;
-      text-transform: uppercase;
-    }
-
-    .card-content {
-      position: relative;
-      z-index: 2;
-      margin-top: auto;
-    }
-
-    .card-title {
-      margin-bottom: 10px;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(1.8rem, 2.7vw, 2.38rem);
-      font-weight: 500;
-      letter-spacing: -0.05em;
-      line-height: 1;
-    }
-
-    .card-description {
-      min-height: 65px;
-      color: var(--muted);
-      font-size: 12.5px;
-      font-weight: 300;
-      line-height: 1.7;
-    }
-
-    .launch-button {
-      width: 100%;
-      min-height: 48px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 22px;
-      padding: 13px 15px;
-      border: 1px solid rgba(var(--accent-rgb), 0.36);
-      border-radius: 7px;
-      color: var(--accent-light);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-      transition:
-        color 0.25s ease,
-        background 0.25s ease,
-        border-color 0.25s ease;
-    }
-
-    .experience-card:hover .launch-button {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #141210;
-    }
-
-    .arrow {
-      font-size: 17px;
-      font-weight: 300;
-      line-height: 0;
-      transition: transform 0.25s ease;
-    }
-
-    .experience-card:hover .arrow {
-      transform: translate(3px, -3px);
-    }
-
-    /* Card art */
-
-    .miner-lines {
-      width: 112px;
-      height: 112px;
-      position: absolute;
-      top: 64px;
-      right: 24px;
-      opacity: 0.68;
-    }
-
-    .miner-lines span {
-      position: absolute;
-      display: block;
-      border: 1px solid var(--accent);
-      transform: rotate(45deg);
-    }
-
-    .miner-lines span:nth-child(1) {
-      width: 76px;
-      height: 76px;
-      top: 18px;
-      left: 18px;
-      opacity: 0.34;
-    }
-
-    .miner-lines span:nth-child(2) {
-      width: 43px;
-      height: 43px;
-      top: 35px;
-      left: 35px;
-      background: rgba(var(--accent-rgb), 0.05);
-      opacity: 0.7;
-    }
-
-    .miner-lines span:nth-child(3) {
-      width: 10px;
-      height: 10px;
-      top: 51px;
-      left: 51px;
-      border: 0;
-      background: var(--accent);
-    }
-
-    .distortion-rings {
-      width: 145px;
-      height: 105px;
-      position: absolute;
-      top: 50px;
-      right: 13px;
-      opacity: 0.72;
-    }
-
-    .distortion-rings span {
-      position: absolute;
-      border: 1px solid var(--accent);
-      border-radius: 50%;
-      opacity: 0.38;
-      transform: skewX(-20deg);
-    }
-
-    .distortion-rings span:nth-child(1) {
-      width: 137px;
-      height: 65px;
-      top: 22px;
-      left: 2px;
-    }
-
-    .distortion-rings span:nth-child(2) {
-      width: 93px;
-      height: 43px;
-      top: 34px;
-      left: 22px;
-      opacity: 0.5;
-    }
-
-    .distortion-rings span:nth-child(3) {
-      width: 49px;
-      height: 22px;
-      top: 46px;
-      left: 44px;
-      border-color: var(--accent-light);
-      opacity: 0.85;
-    }
-
-    .meme-marks {
-      position: absolute;
-      top: 72px;
-      right: 33px;
-      color: var(--accent);
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 85px;
-      font-style: italic;
-      letter-spacing: -0.2em;
-      line-height: 0.5;
-      opacity: 0.38;
-      transform: rotate(-8deg);
-    }
-
-    /* Scientific Instants modal */
-
-    .meme-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: rgba(2, 2, 2, 0.84);
-      backdrop-filter: blur(12px);
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-    }
-
-    .meme-modal.open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-
-    .meme-viewer {
-      width: min(100%, 430px);
-      position: relative;
-    }
-
-    .meme-close {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      margin: 0 0 12px auto;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      background: rgba(18, 18, 17, 0.9);
-      color: var(--text);
-      font-size: 22px;
-      line-height: 1;
-    }
-
-    .meme-frame {
-      overflow: hidden;
-      border: 1px solid rgba(189, 140, 229, 0.28);
-      border-radius: 20px;
-      background: var(--surface);
-      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.65);
-    }
-
-    .meme-progress {
-      display: flex;
-      gap: 5px;
-      padding: 12px 12px 0;
-    }
-
-    .progress-line {
-      height: 2px;
-      flex: 1;
-      overflow: hidden;
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    .progress-line::after {
-      content: "";
-      display: block;
-      width: 0%;
-      height: 100%;
-      background: #e4c9fa;
-      transition: width 0.3s ease;
-    }
-
-    .progress-line.active::after,
-    .progress-line.done::after {
-      width: 100%;
-    }
-
-    .meme-viewport {
-      overflow: hidden;
-      touch-action: pan-y;
-    }
-
-    .meme-track {
-      display: flex;
-      transition: transform 0.38s cubic-bezier(0.22, 0.8, 0.25, 1);
-    }
-
-    .meme-slide {
-      min-width: 100%;
-      min-height: 510px;
-      display: flex;
-      flex-direction: column;
-      padding: 28px 27px 25px;
-      background:
-        radial-gradient(circle at 86% 7%, rgba(189, 140, 229, 0.11), transparent 12rem),
-        var(--surface);
-    }
-
-    .meme-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: #bd8ce5;
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .meme-image-wrap {
-      min-height: 0;
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 20px 0;
-      overflow: hidden;
-      border: 1px solid rgba(189, 140, 229, 0.2);
-      border-radius: 12px;
-      background: #0a0a09;
-    }
-
-    .meme-image {
-      width: 100%;
-      height: 100%;
-      max-height: 285px;
-      display: block;
-      object-fit: contain;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    .meme-placeholder {
-      padding: 30px;
-      color: var(--dim);
-      font-family: "DM Mono", monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      line-height: 1.7;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    .meme-text {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(1.65rem, 6.8vw, 2.2rem);
-      font-weight: 500;
-      letter-spacing: -0.045em;
-      line-height: 1.08;
-    }
-
-    .meme-caption {
-      margin-top: 13px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 300;
-      line-height: 1.65;
-    }
-
-    .meme-controls {
-      display: grid;
-      grid-template-columns: 42px 1fr 42px;
-      align-items: center;
-      gap: 10px;
-      padding: 0 0 17px;
-    }
-
-    .meme-nav {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(189, 140, 229, 0.32);
-      border-radius: 50%;
-      background: transparent;
-      color: #e4c9fa;
-      font-size: 18px;
-    }
-
-    .meme-nav:disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-    }
-
-    .reaction-row {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .reaction-btn {
-      min-width: 42px;
-      height: 42px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 0 10px;
-      border: 1px solid rgba(189, 140, 229, 0.25);
-      border-radius: 21px;
-      background: rgba(255, 255, 255, 0.025);
-      color: #d7d1c6;
-      font-size: 17px;
-      transition:
-        transform 0.18s ease,
-        background 0.18s ease,
-        border-color 0.18s ease;
-    }
-
-    .reaction-btn:hover,
-    .reaction-btn.active {
-      transform: translateY(-2px);
-      border-color: rgba(189, 140, 229, 0.7);
-      background: rgba(189, 140, 229, 0.14);
-    }
-
-    .reaction-btn span {
-      color: var(--muted);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-    }
-
-    .meme-hint {
-      margin-top: 14px;
-      color: var(--dim);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-      letter-spacing: 0.08em;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    /* Footer */
-
-    footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 24px 0 30px;
-      border-top: 1px solid var(--line);
-      color: var(--dim);
-      font-family: "DM Mono", monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      line-height: 1.6;
-      text-transform: uppercase;
-    }
-
-    .footer-note {
-      max-width: 500px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      white-space: nowrap;
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 10px rgba(147, 189, 134, 0.65);
-    }
-
-    /* Tablet */
-
-    @media (max-width: 960px) {
-      .experience-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .experience-card:last-child {
-        min-height: 290px;
-        grid-column: 1 / -1;
-      }
-
-      .experience-card:last-child .card-description {
-        max-width: 440px;
-      }
-    }
-
-    /* Mobile */
-
-    @media (max-width: 650px) {
-      .page {
-        width: min(100% - 32px, 1180px);
-      }
-
-      header {
-        min-height: 78px;
-      }
-
-      .wavelength-logo {
-        height: 34px;
-        max-width: 180px;
-      }
-
-      .edition {
-        max-width: 138px;
-        font-size: 8.5px;
-      }
-
-      main {
-        padding: 62px 0 44px;
-      }
-
-      .eyebrow {
-        margin-bottom: 22px;
-      }
-
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-        margin-bottom: 54px;
-      }
-
-      .hero-title {
-        font-size: clamp(3.2rem, 16vw, 5.1rem);
-      }
-
-      .hero-copy {
-        max-width: 335px;
-        font-size: 13px;
-      }
-
-      .section-label {
-        font-size: 8.5px;
-      }
-
-      .experience-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .experience-card,
-      .experience-card:last-child {
-        min-height: 280px;
-        padding: 24px;
-      }
-
-      .card-description {
-        min-height: auto;
-      }
-
-      .meme-modal {
-        align-items: end;
-        padding: 12px;
-      }
-
-      .meme-viewer {
-        width: 100%;
-      }
-
-      .meme-slide {
-        min-height: min(565px, 70vh);
-        padding: 24px 22px 22px;
-      }
-
-      .meme-image {
-        max-height: min(300px, 38vh);
-      }
-
-      footer {
-        align-items: flex-start;
-        flex-direction: column;
-        padding-bottom: 25px;
-      }
-    }
-
-    @media (max-width: 370px) {
-      .page {
-        width: min(100% - 24px, 1180px);
-      }
-
-      .edition {
-        display: none;
-      }
-
-      .reaction-row {
-        gap: 5px;
-      }
-
-      .reaction-btn {
-        min-width: 39px;
-        padding: 0 8px;
-      }
-    }
+    html,body{
+      margin:0;padding:0;width:100%;height:100%;
+      overflow:hidden;background:#000;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
+      touch-action:none;-webkit-user-select:none;user-select:none;
+    }
+    #app{position:fixed;inset:0;overflow:hidden;background:#000;}
+
+    video#camera{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;
+      transform-origin:center center;
+      background:#000;
+    }
+    canvas#glcanvas{
+      position:absolute;inset:0;width:100%;height:100%;
+      pointer-events:none;
+    }
+
+    #ui{position:absolute;inset:0;pointer-events:none;}
+    #controls{
+      position:absolute;right:12px;bottom:12px;
+      display:flex;flex-direction:column;gap:8px;
+      pointer-events:auto;
+    }
+    button{
+      border:none;border-radius:999px;
+      padding:10px 16px;
+      background:rgba(0,0,0,0.55);color:#fff;
+      font-size:14px;letter-spacing:0.03em;text-transform:uppercase;
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    }
+    button:active{background:rgba(255,255,255,0.18);}
+
+    #hint{
+      position:absolute;left:50%;bottom:18%;
+      transform:translateX(-50%);
+      color:#fff;font-size:15px;
+      padding:10px 16px;border-radius:999px;
+      background:rgba(0,0,0,0.55);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      opacity:1;transition:opacity .6s ease;
+      pointer-events:none;white-space:nowrap;
+    }
+    #hint.hidden{opacity:0;}
+
+    #tapStart{
+      position:absolute;inset:0;
+      background:rgba(0,0,0,0.8);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      flex-direction:column;text-align:center;
+      z-index:10;pointer-events:auto;
+    }
+    #tapStart button{margin-top:16px;background:#fff;color:#000;}
+
+    .back-home {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  z-index: 99999;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid rgba(212, 184, 150, 0.34);
+  border-radius: 999px;
+
+  background: rgba(10, 10, 9, 0.74);
+  backdrop-filter: blur(12px);
+
+  color: #f0d5ad;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.back-home span {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.back-home:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 184, 150, 0.72);
+  background: rgba(30, 27, 22, 0.9);
+}
+
+.back-home:hover span {
+  transform: translateX(-3px);
+}
+
+.back-home:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 650px) {
+  .back-home {
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    min-height: 34px;
+    padding: 0 11px;
+    font-size: 9px;
+  }
+}
   </style>
 </head>
-
 <body>
-  <div class="page">
-    <header>
-      <!-- Put logo.png in the SAME folder as index.html -->
-      <a href="#" class="brand" aria-label="Wavelength home">
-        <img
-          class="wavelength-logo"
-          src="./assets/logo.png"
-          alt="Wavelength"
-        />
-      </a>
 
-      <span class="edition">
-        Edition 46 · VFX / AR Edition 06 · 2026
-      </span>
-    </header>
+  <a class="back-home" href="../index.html" aria-label="Back to Wavelength landing page">
+  <span aria-hidden="true">←</span>
+  Wavelength
+</a>
+  <div id="app">
+    <video id="camera" playsinline muted></video>
+    <canvas id="glcanvas"></canvas>
 
-    <main>
-      <p class="eyebrow">AR / VFX Studio</p>
-
-      <section class="hero-grid" aria-labelledby="page-title">
-        <h1 id="page-title" class="hero-title">
-          Stories that <em>move</em><br />
-          beyond the page.
-        </h1>
-
-        <p class="hero-copy">
-          <strong>Wavelength</strong> is the school’s STEM magazine. In its
-          46th edition, stories move beyond the page through code, VFX, sound,
-          games, and augmented reality.
-        </p>
-      </section>
-
-      <section class="experiences" aria-labelledby="experience-title">
-        <div class="section-label">
-          <span id="experience-title">Select an experience</span>
-          <span>03 / 03</span>
-        </div>
-
-        <div class="experience-grid">
-          <!-- Change href if your actual game folder name differs -->
-          <a
-            class="experience-card blast-miner-card"
-            href="./blast-miner/index.html"
-            aria-label="Play Blast Miner"
-          >
-            <div class="miner-lines" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-
-            <div class="card-top">
-              <span class="card-number">01</span>
-              <span class="card-type">Interactive Game</span>
-            </div>
-
-            <div class="card-content">
-              <h2 class="card-title">Blast Miner</h2>
-
-              <p class="card-description">
-                Drill deeper, manage fuel, uncover ore, and blast through the
-                underground.
-              </p>
-
-              <span class="launch-button">
-                Play Game
-                <span class="arrow" aria-hidden="true">↗</span>
-              </span>
-            </div>
-          </a>
-
-          <!-- Change href if your actual Reality Distortion folder differs -->
-          <a
-            class="experience-card reality-card"
-            href="./reality-distortion/index.html"
-            aria-label="Enter Reality Distortion"
-          >
-            <div class="distortion-rings" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-
-            <div class="card-top">
-              <span class="card-number">02</span>
-              <span class="card-type">Web AR / VFX</span>
-            </div>
-
-            <div class="card-content">
-              <h2 class="card-title">Reality Distortion</h2>
-
-              <p class="card-description">
-                Move through a transparent liquid-glass field and bend the
-                world around your hand.
-              </p>
-
-              <span class="launch-button">
-                Enter Experience
-                <span class="arrow" aria-hidden="true">↗</span>
-              </span>
-            </div>
-          </a>
-
-          <button
-            class="experience-card instants-card"
-            id="openMemesBtn"
-            type="button"
-            aria-haspopup="dialog"
-            aria-controls="memeModal"
-          >
-            <div class="meme-marks" aria-hidden="true">“”</div>
-
-            <div class="card-top">
-              <span class="card-number">03</span>
-              <span class="card-type">Swipe / React</span>
-            </div>
-
-            <div class="card-content">
-              <h2 class="card-title">Scientific Instants</h2>
-
-              <p class="card-description">
-                A swipeable stream of science humour, visual moments, and
-                memes from Wavelength.
-              </p>
-
-              <span class="launch-button">
-                View Instants
-                <span class="arrow" aria-hidden="true">↗</span>
-              </span>
-            </div>
-          </button>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p class="footer-note">
-        Wavelength · The School’s STEM Magazine · Edition 46 · VFX / AR Edition 06.
-      </p>
-
-      <span class="status">
-        <span class="status-dot" aria-hidden="true"></span>
-        Experiences online
-      </span>
-    </footer>
-  </div>
-
-  <!-- Scientific Instants -->
-
-  <div
-    class="meme-modal"
-    id="memeModal"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Scientific Instants"
-  >
-    <div class="meme-viewer">
-      <button
-        class="meme-close"
-        id="closeMemesBtn"
-        type="button"
-        aria-label="Close Scientific Instants"
-      >
-        ×
-      </button>
-
-      <div class="meme-frame">
-        <div
-          class="meme-progress"
-          id="memeProgress"
-          aria-hidden="true"
-        ></div>
-
-        <div class="meme-viewport" id="memeViewport">
-          <div class="meme-track" id="memeTrack">
-
-            <!-- MEME 01 -->
-            <article class="meme-slide">
-              <div class="meme-meta">
-                <span>Scientific Instant 01</span>
-                <span>Wavelength 46</span>
-              </div>
-
-              <div class="meme-image-wrap">
-                <img
-                  class="meme-image"
-                  src="./assets/memes/meme-01.jpg"
-                  alt="Scientific meme 1"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                />
-
-                <p class="meme-placeholder" style="display: none;">
-                  Put meme-01.jpg inside<br />
-                  assets/memes/
-                </p>
-              </div>
-
-              <div>
-                <h2 class="meme-text">Your first meme caption goes here.</h2>
-                <p class="meme-caption">
-                  Add an optional short science context or image credit here.
-                </p>
-              </div>
-            </article>
-
-            <!-- MEME 02 -->
-            <article class="meme-slide">
-              <div class="meme-meta">
-                <span>Scientific Instant 02</span>
-                <span>Wavelength 46</span>
-              </div>
-
-              <div class="meme-image-wrap">
-                <img
-                  class="meme-image"
-                  src="./assets/memes/meme-02.jpg"
-                  alt="Scientific meme 2"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                />
-
-                <p class="meme-placeholder" style="display: none;">
-                  Put meme-02.jpg inside<br />
-                  assets/memes/
-                </p>
-              </div>
-
-              <div>
-                <h2 class="meme-text">Your second meme caption goes here.</h2>
-                <p class="meme-caption">
-                  Add an optional short science context or image credit here.
-                </p>
-              </div>
-            </article>
-
-            <!-- MEME 03 -->
-            <article class="meme-slide">
-              <div class="meme-meta">
-                <span>Scientific Instant 03</span>
-                <span>Wavelength 46</span>
-              </div>
-
-              <div class="meme-image-wrap">
-                <img
-                  class="meme-image"
-                  src="./assets/memes/meme-03.jpg"
-                  alt="Scientific meme 3"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                />
-
-                <p class="meme-placeholder" style="display: none;">
-                  Put meme-03.jpg inside<br />
-                  assets/memes/
-                </p>
-              </div>
-
-              <div>
-                <h2 class="meme-text">Your third meme caption goes here.</h2>
-                <p class="meme-caption">
-                  Add an optional short science context or image credit here.
-                </p>
-              </div>
-            </article>
-
-          </div>
-        </div>
-
-        <div class="meme-controls">
-          <button
-            class="meme-nav"
-            id="prevMeme"
-            type="button"
-            aria-label="Previous meme"
-          >
-            ←
-          </button>
-
-          <div class="reaction-row" aria-label="React to this meme">
-            <button class="reaction-btn" type="button" aria-label="Love">
-              ❤️ <span>0</span>
-            </button>
-
-            <button class="reaction-btn" type="button" aria-label="Laugh">
-              😂 <span>0</span>
-            </button>
-
-            <button class="reaction-btn" type="button" aria-label="Mind blown">
-              🤯 <span>0</span>
-            </button>
-          </div>
-
-          <button
-            class="meme-nav"
-            id="nextMeme"
-            type="button"
-            aria-label="Next meme"
-          >
-            →
-          </button>
-        </div>
+    <div id="ui">
+      <div id="hint">Swipe your hand to push the liquid</div>
+      <div id="controls">
+        <button id="flipBtn">Flip Camera</button>
       </div>
-
-      <p class="meme-hint">Swipe, use arrows, or press left / right</p>
+      <div id="tapStart">
+        <div>Tap to enable camera &amp; audio</div>
+        <button id="startBtn">Start</button>
+      </div>
     </div>
   </div>
 
+  <!-- Vertex shader -->
+  <script id="vs" type="x-shader/x-vertex">
+    attribute vec2 a_position;
+    varying vec2 v_uv;
+    void main(){
+      v_uv = a_position*0.5+0.5;
+      gl_Position = vec4(a_position,0.0,1.0);
+    }
+  </script>
+
+  <!-- Fragment shader: liquid glass + global flow -->
+  <script id="fs" type="x-shader/x-fragment">
+    precision highp float;
+    varying vec2 v_uv;
+    uniform sampler2D u_camera;
+    uniform float u_time;
+
+    const int MAX_CENTERS = 20;
+    uniform int   u_centerCount;
+    uniform vec2  u_centers[MAX_CENTERS];
+    uniform float u_strengths[MAX_CENTERS];
+    uniform float u_camMotion;
+    uniform vec2  u_flow;      // global flow direction from hand motion
+
+    // smooth liquid field around hand
+    vec2 liquidField(vec2 uv,out float fieldStrength){
+      vec2 accum = vec2(0.0);
+      float total = 0.0;
+      for(int i=0;i<MAX_CENTERS;i++){
+        if(i>=u_centerCount)break;
+        float s = u_strengths[i];
+        if(s<=0.001)continue;
+        vec2 c = u_centers[i];
+        vec2 d = c - uv;
+        float dist = length(d);
+        float radius = 0.35;          // wide influence
+        if(dist>radius)continue;
+        float x = dist/radius;
+        float fall = pow(1.0-x, 2.0);
+        float influence = fall * s;
+        vec2 dir = dist>1e-4 ? normalize(d) : vec2(0.0);
+        accum += dir * influence;
+        total += influence;
+      }
+      if(total>0.0) accum /= total;
+      fieldStrength = clamp(total,0.0,1.0);
+      return accum;
+    }
+
+    vec3 sampleBlur(sampler2D tex, vec2 uv, vec2 offset, float blurAmount){
+      vec3 col = vec3(0.0);
+      float wSum = 0.0;
+      for(int i=-3;i<=3;i++){
+        float w = 1.0 - abs(float(i))/3.0;
+        vec2 u = uv + offset * blurAmount * float(i);
+        u = clamp(u,0.001,0.999);
+        col += texture2D(tex,u).rgb * w;
+        wSum += w;
+      }
+      return col / wSum;
+    }
+
+    void main(){
+      // flip Y → camera upright
+      vec2 uv = vec2(v_uv.x, 1.0 - v_uv.y);
+
+      float field;
+      vec2 dir = liquidField(uv, field);
+
+      // combine local pull with global flow
+      vec2 flowDir = normalize(u_flow + dir * 0.8 + 1e-6);
+      float flowMag = length(u_flow);
+
+      float mag = (0.03 + 0.10*u_camMotion) * field;
+      mag += 0.035 * flowMag;     // extra displacement from overall flow
+      vec2 offset = flowDir * mag;
+
+      // no chromatic separation (keep it clean): just one UV
+      vec3 base = texture2D(u_camera, uv).rgb;
+
+      float blurAmount = 0.6 * field + 0.3 * flowMag; // more blur with flow
+      vec3 refr = sampleBlur(u_camera, uv + offset, flowDir, blurAmount);
+
+      float glassAmount = clamp(field*u_camMotion + flowMag*0.6,0.0,1.0);
+      glassAmount *= 0.9;
+
+      vec3 color = mix(base, refr, glassAmount);
+
+      float edge = smoothstep(0.2,0.8,glassAmount);
+      color += vec3(edge*0.10);
+
+      gl_FragColor = vec4(color,1.0);
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
   <script>
-    const memeModal = document.getElementById("memeModal");
-    const openMemesBtn = document.getElementById("openMemesBtn");
-    const closeMemesBtn = document.getElementById("closeMemesBtn");
+  (function(){
+    const video      = document.getElementById('camera');
+    const canvas     = document.getElementById('glcanvas');
+    const flipBtn    = document.getElementById('flipBtn');
+    const hint       = document.getElementById('hint');
+    const tapOverlay = document.getElementById('tapStart');
+    const startBtn   = document.getElementById('startBtn');
 
-    const memeTrack = document.getElementById("memeTrack");
-    const memeViewport = document.getElementById("memeViewport");
-    const memeProgress = document.getElementById("memeProgress");
+    let gl, program;
+    let a_position,u_camera,u_time,u_centerCount,u_centers,u_strengths,u_camMotion,u_flow;
+    let quadBuffer,cameraTexture;
 
-    const previousButton = document.getElementById("prevMeme");
-    const nextButton = document.getElementById("nextMeme");
+    let facingMode = 'environment';
+    let mirrorVideo = false;
+    let streaming=false;
 
-    const slides = [...document.querySelectorAll(".meme-slide")];
-    const reactionButtons = [...document.querySelectorAll(".reaction-btn")];
+    const MAX_HANDS=2, LENSES_PER_HAND=10, MAX_CENTERS=MAX_HANDS*LENSES_PER_HAND;
+    const handStates=[];
+    for(let i=0;i<MAX_HANDS;i++){
+      handStates.push({visible:false,strength:0,lastSeen:0,
+                       centers:new Array(LENSES_PER_HAND).fill([0.5,0.5])});
+    }
+    const centersFlat   = new Float32Array(MAX_CENTERS*2);
+    const strengthsFlat = new Float32Array(MAX_CENTERS);
 
-    let currentSlide = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
-    let previousFocus = null;
+    let lastCenter = null;
+    let camMotion  = 0;
+    let flow       = {x:0,y:0};  // global liquid flow vector
 
-    const reactions = slides.map(() => ({
-      selected: null,
-      counts: [0, 0, 0]
-    }));
+    // Audio same as before
+    let audioCtx=null, gainNode=null;
+    const noteScale = [220,247,262,294,330,392,440];
+    let lastNoteTime=0;
 
-    slides.forEach(() => {
-      const progressLine = document.createElement("span");
-      progressLine.className = "progress-line";
-      memeProgress.appendChild(progressLine);
-    });
-
-    const progressLines = [...document.querySelectorAll(".progress-line")];
-
-    function updateReactions() {
-      const currentReactions = reactions[currentSlide];
-
-      reactionButtons.forEach((button, index) => {
-        button.classList.toggle(
-          "active",
-          currentReactions.selected === index
-        );
-
-        button.querySelector("span").textContent =
-          currentReactions.counts[index];
-      });
+    function initAudio(){
+      if(audioCtx)return;
+      audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      gainNode=audioCtx.createGain();
+      gainNode.gain.value=0;
+      gainNode.connect(audioCtx.destination);
     }
 
-    function updateViewer() {
-      memeTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-      progressLines.forEach((line, index) => {
-        line.classList.toggle("active", index === currentSlide);
-        line.classList.toggle("done", index < currentSlide);
-      });
-
-      previousButton.disabled = currentSlide === 0;
-      nextButton.disabled = currentSlide === slides.length - 1;
-
-      updateReactions();
+    function playNote(strength){
+      if(!audioCtx)return;
+      const now=audioCtx.currentTime;
+      if(now-lastNoteTime<0.09)return;
+      lastNoteTime=now;
+      const osc=audioCtx.createOscillator();
+      const g=audioCtx.createGain();
+      const idx=Math.floor(Math.random()*noteScale.length);
+      const base=noteScale[idx];
+      osc.type='triangle';
+      osc.frequency.value=base+strength*180;
+      osc.connect(g).connect(gainNode);
+      g.gain.value=0;
+      osc.start(now);
+      g.gain.linearRampToValueAtTime(0.25*strength,now+0.03);
+      g.gain.linearRampToValueAtTime(0.0,now+0.20);
+      osc.stop(now+0.22);
     }
 
-    function openMemes() {
-      previousFocus = document.activeElement;
-      memeModal.classList.add("open");
-      document.body.style.overflow = "hidden";
-      updateViewer();
-      closeMemesBtn.focus();
+    function updateAudio(globalStrength){
+      if(!audioCtx)return;
+      const now=audioCtx.currentTime;
+      gainNode.gain.linearRampToValueAtTime(0.5*globalStrength,now+0.05);
+      if(globalStrength>0.2) playNote(globalStrength);
     }
 
-    function closeMemes() {
-      memeModal.classList.remove("open");
-      document.body.style.overflow = "";
-
-      if (previousFocus) {
-        previousFocus.focus();
-      }
-    }
-
-    function nextSlide() {
-      if (currentSlide < slides.length - 1) {
-        currentSlide += 1;
-        updateViewer();
-      }
-    }
-
-    function previousSlide() {
-      if (currentSlide > 0) {
-        currentSlide -= 1;
-        updateViewer();
-      }
-    }
-
-    openMemesBtn.addEventListener("click", openMemes);
-    closeMemesBtn.addEventListener("click", closeMemes);
-
-    nextButton.addEventListener("click", nextSlide);
-    previousButton.addEventListener("click", previousSlide);
-
-    memeModal.addEventListener("click", (event) => {
-      if (event.target === memeModal) {
-        closeMemes();
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (!memeModal.classList.contains("open")) return;
-
-      if (event.key === "Escape") closeMemes();
-      if (event.key === "ArrowRight") nextSlide();
-      if (event.key === "ArrowLeft") previousSlide();
-    });
-
-    memeViewport.addEventListener(
-      "touchstart",
-      (event) => {
-        touchStartX = event.changedTouches[0].screenX;
-      },
-      { passive: true }
-    );
-
-    memeViewport.addEventListener(
-      "touchend",
-      (event) => {
-        touchEndX = event.changedTouches[0].screenX;
-        const distance = touchEndX - touchStartX;
-
-        if (Math.abs(distance) < 45) return;
-
-        if (distance < 0) {
-          nextSlide();
-        } else {
-          previousSlide();
+    function initGL(){
+      gl=canvas.getContext('webgl',{alpha:true,antialias:true});
+      if(!gl){alert('WebGL not supported');return;}
+      const vsSrc=document.getElementById('vs').textContent.trim();
+      const fsSrc=document.getElementById('fs').textContent.trim();
+      function compile(t,s){
+        const sh=gl.createShader(t);
+        gl.shaderSource(sh,s);gl.compileShader(sh);
+        if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){
+          console.error(gl.getShaderInfoLog(sh));
+          throw new Error('shader error');
         }
-      },
-      { passive: true }
-    );
+        return sh;
+      }
+      const vs=compile(gl.VERTEX_SHADER,vsSrc);
+      const fs=compile(gl.FRAGMENT_SHADER,fsSrc);
+      program=gl.createProgram();
+      gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);
+      if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
+        console.error(gl.getProgramInfoLog(program));
+        throw new Error('link error');
+      }
+      gl.useProgram(program);
+      a_position    = gl.getAttribLocation(program,'a_position');
+      u_camera      = gl.getUniformLocation(program,'u_camera');
+      u_time        = gl.getUniformLocation(program,'u_time');
+      u_centerCount = gl.getUniformLocation(program,'u_centerCount');
+      u_centers     = gl.getUniformLocation(program,'u_centers');
+      u_strengths   = gl.getUniformLocation(program,'u_strengths');
+      u_camMotion   = gl.getUniformLocation(program,'u_camMotion');
+      u_flow        = gl.getUniformLocation(program,'u_flow');
 
-    reactionButtons.forEach((button, selectedIndex) => {
-      button.addEventListener("click", () => {
-        const slideReactions = reactions[currentSlide];
-        const oldSelection = slideReactions.selected;
+      quadBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER,quadBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(a_position);
+      gl.vertexAttribPointer(a_position,2,gl.FLOAT,false,0,0);
 
-        if (oldSelection === selectedIndex) {
-          slideReactions.selected = null;
-          slideReactions.counts[selectedIndex] = Math.max(
-            0,
-            slideReactions.counts[selectedIndex] - 1
-          );
-        } else {
-          if (oldSelection !== null) {
-            slideReactions.counts[oldSelection] = Math.max(
-              0,
-              slideReactions.counts[oldSelection] - 1
-            );
+      cameraTexture=gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D,cameraTexture);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.uniform1i(u_camera,0);
+
+      resize();
+      window.addEventListener('resize',resize);
+    }
+    function resize(){
+      const dpr=window.devicePixelRatio||1;
+      const w=canvas.clientWidth*dpr,h=canvas.clientHeight*dpr;
+      if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+      gl.viewport(0,0,canvas.width,canvas.height);
+    }
+
+    let hands=null, mpCamera=null;
+    const lensIndices=[8,12,16,20,4,7,11,15,0,9];
+
+    async function startCameraAndHands(){
+      if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+        alert('Camera API not available (HTTPS + modern browser required).');
+        return;
+      }
+
+      hands=new Hands({
+        locateFile:file=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+      });
+      hands.setOptions({
+        maxNumHands:MAX_HANDS,
+        modelComplexity:1,
+        minDetectionConfidence:0.6,
+        minTrackingConfidence:0.6
+      });
+      hands.onResults(onHandsResults);
+
+      mpCamera=new Camera(video,{
+        onFrame:async()=>{ await hands.send({image:video}); },
+        width:1280,height:720,facingMode:facingMode
+      });
+      await mpCamera.start();
+      streaming=true;
+
+      mirrorVideo = (facingMode === 'user');
+      applyVideoTransform();
+    }
+
+    function applyVideoTransform(){
+      let t='';
+      if(mirrorVideo) t+='scaleX(-1) ';
+      video.style.transform=t||'none';
+    }
+
+    flipBtn.addEventListener('click',()=>{
+      facingMode = (facingMode === 'user') ? 'environment' : 'user';
+      if(mpCamera){ mpCamera.stop(); mpCamera=null; }
+      startCameraAndHands();
+    });
+
+    let firstHand=false;
+    function onHandsResults(results){
+      const now=performance.now();
+      const list=results.multiHandLandmarks||[];
+      for(let i=0;i<MAX_HANDS;i++){
+        const lm=list[i];
+        const state=handStates[i];
+        if(lm){
+          const centers=[];
+          for(let j=0;j<LENSES_PER_HAND;j++){
+            const idx=lensIndices[j],p=lm[idx];
+            let x=p.x,y=p.y;
+            if(mirrorVideo) x=1-x;
+            centers.push([x,y]);
           }
-
-          slideReactions.selected = selectedIndex;
-          slideReactions.counts[selectedIndex] += 1;
+          state.centers=centers;
+          state.visible=true;
+          state.lastSeen=now;
+          if(!firstHand){
+            firstHand=true;
+            hint.classList.add('hidden');
+          }
+        }else{
+          if(now-state.lastSeen>250) state.visible=false;
         }
+      }
 
-        updateReactions();
+      // camera/hand motion + flow: movement of average center
+      let cx=0,cy=0,count=0;
+      handStates.forEach(s=>{
+        if(!s.visible)return;
+        s.centers.forEach(c=>{cx+=c[0];cy+=c[1];count++;});
       });
-    });
+      if(count>0){
+        cx/=count; cy/=count;
+        if(lastCenter){
+          const dx=cx-lastCenter[0];
+          const dy=cy-lastCenter[1];
+          const d=Math.sqrt(dx*dx+dy*dy);
 
-    updateViewer();
+          // camMotion just for intensity
+          camMotion = camMotion*0.9 + Math.min(1.0,d*18.0)*0.25;
+
+          // global flow vector → direction liquid keeps moving
+          flow.x = flow.x*0.9 + dx*1.8;
+          flow.y = flow.y*0.9 + dy*1.8;
+        }
+        lastCenter=[cx,cy];
+      }else{
+        camMotion*=0.96;
+        flow.x *= 0.95;
+        flow.y *= 0.95;
+      }
+    }
+
+    function updateStrengths(dt){
+      const inSpeed=5,outSpeed=2;
+      handStates.forEach(s=>{
+        const target=s.visible?1:0;
+        const speed=s.visible?inSpeed:outSpeed;
+        const delta=(target-s.strength)*Math.min(1,dt*speed);
+        s.strength=Math.max(0,Math.min(1,s.strength+delta));
+      });
+    }
+
+    function packCenters(){
+      let count=0;
+      for(let h=0;h<MAX_HANDS;h++){
+        const s=handStates[h];
+        for(let j=0;j<LENSES_PER_HAND;j++){
+          const gi=h*LENSES_PER_HAND+j;
+          if(s.strength>0.001){
+            const c=s.centers[j]||[0.5,0.5];
+            centersFlat[gi*2]   = c[0];
+            centersFlat[gi*2+1] = c[1];
+            strengthsFlat[gi]   = s.strength;
+            count = gi+1;
+          }else{
+            centersFlat[gi*2]   = 0;
+            centersFlat[gi*2+1] = 0;
+            strengthsFlat[gi]   = 0;
+          }
+        }
+      }
+      gl.uniform1i(u_centerCount,count);
+      gl.uniform2fv(u_centers,centersFlat);
+      gl.uniform1fv(u_strengths,strengthsFlat);
+    }
+
+    let startTime=null,lastTime=null;
+    function render(nowMs){
+      requestAnimationFrame(render);
+      if(!gl||!streaming)return;
+      if(!startTime){startTime=nowMs;lastTime=nowMs;}
+      const t =(nowMs-startTime)/1000;
+      const dt=(nowMs-lastTime)/1000;
+      lastTime=nowMs;
+
+      updateStrengths(dt);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D,cameraTexture);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video);
+
+      gl.clearColor(0,0,0,0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER,quadBuffer);
+      gl.enableVertexAttribArray(a_position);
+      gl.vertexAttribPointer(a_position,2,gl.FLOAT,false,0,0);
+      gl.uniform1f(u_time,t);
+      gl.uniform1f(u_camMotion,camMotion);
+      gl.uniform2f(u_flow,flow.x,flow.y);
+      packCenters();
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+
+      const globalStrength = Math.max(Math.min(Math.sqrt(flow.x*flow.x+flow.y*flow.y)*4.0,1.0),0.0);
+      updateAudio(globalStrength);
+    }
+
+    function startExperience(){
+      if(tapOverlay.style.display==='none')return;
+      tapOverlay.style.display='none';
+      initAudio();
+      initGL();
+      startCameraAndHands();
+      requestAnimationFrame(render);
+    }
+
+    startBtn.addEventListener('click',startExperience);
+    tapOverlay.addEventListener('click',startExperience);
+    document.body.addEventListener('click',()=>{startExperience();},{once:true});
+  })();
   </script>
 </body>
 </html>
