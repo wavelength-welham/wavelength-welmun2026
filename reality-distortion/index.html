@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
   />
-  <title>Reality Distortion AR</title>
+  <title>Reality Distortion AR – Liquid Glass Flow</title>
 
   <style>
     html,
@@ -37,10 +37,6 @@
       height: 100%;
     }
 
-    /*
-      Camera remains underneath as a backup.
-      Canvas renders the actual distorted output.
-    */
     #camera {
       z-index: 1;
       object-fit: cover;
@@ -68,12 +64,11 @@
       max-width: calc(100vw - 36px);
       padding: 10px 16px;
       border-radius: 999px;
-      color: white;
-      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      background: rgba(0, 0, 0, 0.58);
       font-size: 14px;
       text-align: center;
       white-space: nowrap;
-      pointer-events: none;
       transition: opacity 0.5s ease;
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
@@ -95,8 +90,8 @@
       padding: 10px 16px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       border-radius: 999px;
-      color: white;
-      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      background: rgba(0, 0, 0, 0.58);
       font: inherit;
       font-size: 13px;
       font-weight: 600;
@@ -124,8 +119,8 @@
       flex-direction: column;
       gap: 14px;
       padding: 24px;
-      color: white;
-      background: rgba(0, 0, 0, 0.88);
+      color: #fff;
+      background: rgba(0, 0, 0, 0.86);
       text-align: center;
       pointer-events: auto;
     }
@@ -137,9 +132,9 @@
     }
 
     #startBtn {
-      color: black;
-      background: white;
-      border-color: white;
+      color: #000;
+      background: #fff;
+      border-color: #fff;
     }
 
     #status {
@@ -181,6 +176,7 @@
     .back-home span {
       font-size: 16px;
       font-weight: 300;
+      line-height: 1;
     }
 
     @media (max-width: 650px) {
@@ -200,7 +196,7 @@
 </head>
 
 <body>
-  <a class="back-home" href="../index.html" aria-label="Back to home">
+  <a class="back-home" href="../index.html" aria-label="Back to Wavelength">
     <span aria-hidden="true">←</span>
     Wavelength
   </a>
@@ -217,9 +213,9 @@
       </div>
 
       <div id="tapStart">
-        <p>Allow camera access, then hold one open hand clearly in view.</p>
+        <p>Tap Start, allow camera access, then move one hand in front of the camera.</p>
         <button id="startBtn" type="button">Start Experience</button>
-        <p id="status"></p>
+        <p id="status" role="alert"></p>
       </div>
     </div>
   </main>
@@ -244,20 +240,15 @@
     uniform sampler2D u_camera;
     uniform int u_centerCount;
 
-    /*
-      x = horizontal point position
-      y = vertical point position
-      z = point strength
-    */
     const int MAX_CENTERS = 8;
     uniform vec3 u_lenses[MAX_CENTERS];
 
     uniform float u_motion;
     uniform vec2 u_flow;
 
-    vec2 getLiquidField(vec2 uv, out float totalStrength) {
-      vec2 directionSum = vec2(0.0);
-      float influenceSum = 0.0;
+    vec2 liquidField(vec2 uv, out float fieldStrength) {
+      vec2 accumulatedDirection = vec2(0.0);
+      float totalInfluence = 0.0;
 
       for (int i = 0; i < MAX_CENTERS; i++) {
         if (i >= u_centerCount) {
@@ -268,33 +259,37 @@
         vec2 centre = lens.xy;
         float strength = lens.z;
 
-        vec2 delta = centre - uv;
-        float distanceFromCentre = length(delta);
-        float radius = 0.34;
-
-        if (distanceFromCentre > radius || strength < 0.001) {
+        if (strength <= 0.001) {
           continue;
         }
 
-        float normalisedDistance = distanceFromCentre / radius;
+        vec2 delta = centre - uv;
+        float distanceToCentre = length(delta);
+        float radius = 0.34;
+
+        if (distanceToCentre > radius) {
+          continue;
+        }
+
+        float normalisedDistance = distanceToCentre / radius;
         float falloff = pow(1.0 - normalisedDistance, 2.0);
         float influence = falloff * strength;
 
-        vec2 direction = distanceFromCentre > 0.0001
+        vec2 direction = distanceToCentre > 0.0001
           ? normalize(delta)
           : vec2(0.0);
 
-        directionSum += direction * influence;
-        influenceSum += influence;
+        accumulatedDirection += direction * influence;
+        totalInfluence += influence;
       }
 
-      if (influenceSum > 0.0) {
-        directionSum /= influenceSum;
+      if (totalInfluence > 0.0) {
+        accumulatedDirection /= totalInfluence;
       }
 
-      totalStrength = clamp(influenceSum, 0.0, 1.0);
+      fieldStrength = clamp(totalInfluence, 0.0, 1.0);
 
-      return directionSum;
+      return accumulatedDirection;
     }
 
     vec3 blurAlongDirection(
@@ -320,13 +315,10 @@
     }
 
     void main() {
-      /*
-        Camera texture has opposite vertical orientation in WebGL.
-      */
       vec2 uv = vec2(v_uv.x, 1.0 - v_uv.y);
 
       float fieldStrength;
-      vec2 localDirection = getLiquidField(uv, fieldStrength);
+      vec2 localDirection = liquidField(uv, fieldStrength);
 
       vec2 combinedDirection = u_flow + localDirection * 0.85;
       float combinedLength = length(combinedDirection);
@@ -343,23 +335,31 @@
 
       vec2 offset = flowDirection * distortionAmount;
 
-      vec3 original = texture2D(u_camera, uv).rgb;
+      vec3 originalColour = texture2D(u_camera, uv).rgb;
 
-      vec3 distorted = blurAlongDirection(
+      float blurAmount =
+        0.04 * fieldStrength +
+        0.025 * flowStrength;
+
+      vec3 distortedColour = blurAlongDirection(
         u_camera,
         uv + offset,
         flowDirection,
-        0.04 * fieldStrength + 0.025 * flowStrength
+        blurAmount
       );
 
       float glassAmount = clamp(
-        fieldStrength * (0.25 + u_motion * 0.9) +
+        fieldStrength * (0.28 + u_motion * 0.9) +
         flowStrength * 0.45,
         0.0,
         1.0
       );
 
-      vec3 finalColour = mix(original, distorted, glassAmount);
+      vec3 finalColour = mix(
+        originalColour,
+        distortedColour,
+        glassAmount
+      );
 
       float highlight = smoothstep(0.15, 0.82, glassAmount);
       finalColour += vec3(highlight * 0.055);
@@ -368,11 +368,12 @@
     }
   </script>
 
-  <!-- IMPORTANT: This URL is intentionally exact and valid. -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js"
-    crossorigin="anonymous"
-  ></script>
+  <!--
+    THESE ARE THE CORRECT MEDIAPIPE URLS.
+    Do not replace them with any URL containing [email protected].
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 
   <script>
     (() => {
@@ -380,46 +381,45 @@
 
       const video = document.getElementById("camera");
       const canvas = document.getElementById("glcanvas");
-
       const startButton = document.getElementById("startBtn");
       const flipButton = document.getElementById("flipBtn");
-
       const overlay = document.getElementById("tapStart");
-      const status = document.getElementById("status");
       const hint = document.getElementById("hint");
+      const status = document.getElementById("status");
 
       /*
-        8 points instead of 20:
-        substantially safer on mobile WebGL.
+        Eight landmark points make this mobile-safe.
+        0 wrist, 4 thumb tip, 8 index tip, 12 middle tip,
+        16 ring tip, 20 pinky tip, 5 index base, 17 pinky base.
       */
       const LENS_INDICES = [0, 4, 8, 12, 16, 20, 5, 17];
       const MAX_CENTERS = LENS_INDICES.length;
+      const TRACKING_INTERVAL = 50;
 
-      let gl;
-      let program;
-      let cameraTexture;
-      let quadBuffer;
+      let gl = null;
+      let program = null;
+      let quadBuffer = null;
+      let cameraTexture = null;
 
-      let aPosition;
-      let uCamera;
-      let uCenterCount;
-      let uLenses;
-      let uMotion;
-      let uFlow;
+      let aPosition = null;
+      let uCamera = null;
+      let uCenterCount = null;
+      let uLenses = null;
+      let uMotion = null;
+      let uFlow = null;
 
-      let hands;
+      let hands = null;
       let stream = null;
 
-      let started = false;
-      let starting = false;
-      let trackingBusy = false;
+      let isStreaming = false;
+      let isStarting = false;
       let animationStarted = false;
+      let trackingBusy = false;
 
       let facingMode = "environment";
       let mirrored = false;
-
       let lastTrackingTime = 0;
-      const TRACKING_INTERVAL = 45;
+      let previousFrameTime = 0;
 
       const lensData = new Float32Array(MAX_CENTERS * 3);
 
@@ -452,9 +452,9 @@
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-          const message = gl.getShaderInfoLog(shader);
+          const error = gl.getShaderInfoLog(shader);
           gl.deleteShader(shader);
-          throw new Error(`Shader error: ${message}`);
+          throw new Error(`Shader error: ${error}`);
         }
 
         return shader;
@@ -472,6 +472,11 @@
         if (!gl) {
           throw new Error("WebGL is not available in this browser.");
         }
+
+        console.log(
+          "MAX_FRAGMENT_UNIFORM_VECTORS:",
+          gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)
+        );
 
         const vertexSource = document
           .getElementById("vertexShader")
@@ -525,7 +530,7 @@
           uMotion === null ||
           uFlow === null
         ) {
-          throw new Error("Required shader variables could not be found.");
+          throw new Error("Could not find required shader variables.");
         }
 
         quadBuffer = gl.createBuffer();
@@ -576,6 +581,7 @@
         resizeCanvas();
 
         window.addEventListener("resize", resizeCanvas);
+
         window.addEventListener("orientationchange", () => {
           setTimeout(resizeCanvas, 250);
         });
@@ -585,10 +591,9 @@
         if (!gl) return;
 
         /*
-          Keeps mobile shader workload manageable.
+          Prevents extremely expensive 3x / 4x phone rendering.
         */
         const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-
         const width = Math.floor(canvas.clientWidth * dpr);
         const height = Math.floor(canvas.clientHeight * dpr);
 
@@ -604,12 +609,18 @@
         if (hands) return;
 
         /*
-          Do not change this URL to the broken [email protected] form.
+          This catches the exact issue shown in your screenshot
+          before the program attempts `new Hands(...)`.
         */
-        hands = new Hands({
-          locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`;
-          }
+        if (typeof window.Hands === "undefined") {
+          throw new Error(
+            "MediaPipe failed to load. Check your internet connection, then hard-refresh this page."
+          );
+        }
+
+        hands = new window.Hands({
+          locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
 
         hands.setOptions({
@@ -638,10 +649,10 @@
         for (const landmarkIndex of LENS_INDICES) {
           const landmark = landmarks[landmarkIndex];
 
-          /*
-            Landmarks must match the visual mirror of the front camera.
-          */
-          const x = mirrored ? 1 - landmark.x : landmark.x;
+          const x = mirrored
+            ? 1 - landmark.x
+            : landmark.x;
+
           const y = landmark.y;
 
           points.push([x, y]);
@@ -667,7 +678,6 @@
         if (lastHandPosition) {
           const dx = averageX - lastHandPosition.x;
           const dy = averageY - lastHandPosition.y;
-
           const speed = Math.hypot(dx, dy);
 
           motion = motion * 0.86 + Math.min(speed * 20, 1) * 0.24;
@@ -683,7 +693,7 @@
       }
 
       async function stopCamera() {
-        started = false;
+        isStreaming = false;
 
         if (stream) {
           stream.getTracks().forEach((track) => track.stop());
@@ -702,28 +712,22 @@
 
         await stopCamera();
 
-        let cameraStream;
-
         try {
-          cameraStream = await navigator.mediaDevices.getUserMedia({
+          stream = await navigator.mediaDevices.getUserMedia({
             audio: false,
             video: {
               facingMode: { ideal: facingMode },
-              width: { ideal: 1280 },
-              height: { ideal: 720 }
+              width: { ideal: 960 },
+              height: { ideal: 540 },
+              frameRate: { ideal: 24, max: 30 }
             }
           });
-        } catch (error) {
-          /*
-            Fallback if a phone rejects the requested camera constraint.
-          */
-          cameraStream = await navigator.mediaDevices.getUserMedia({
+        } catch (firstError) {
+          stream = await navigator.mediaDevices.getUserMedia({
             audio: false,
             video: true
           });
         }
-
-        stream = cameraStream;
 
         video.srcObject = stream;
         video.muted = true;
@@ -732,25 +736,34 @@
         await video.play();
 
         const track = stream.getVideoTracks()[0];
-        const settings = track.getSettings ? track.getSettings() : {};
+        const settings = track.getSettings
+          ? track.getSettings()
+          : {};
 
-        const realFacingMode = settings.facingMode || facingMode;
+        const actualFacingMode =
+          settings.facingMode || facingMode;
 
-        mirrored = realFacingMode === "user";
-        video.style.transform = mirrored ? "scaleX(-1)" : "none";
+        mirrored = actualFacingMode === "user";
 
-        started = true;
+        video.style.transform = mirrored
+          ? "scaleX(-1)"
+          : "none";
+
+        isStreaming = true;
       }
 
       function updateHandState(deltaTime) {
-        const target = hand.visible ? 1 : 0;
-        const rate = hand.visible ? 6 : 2.5;
+        const targetStrength = hand.visible ? 1 : 0;
+        const speed = hand.visible ? 6 : 2.5;
 
         hand.strength +=
-          (target - hand.strength) *
-          Math.min(deltaTime * rate, 1);
+          (targetStrength - hand.strength) *
+          Math.min(deltaTime * speed, 1);
 
-        hand.strength = Math.max(0, Math.min(1, hand.strength));
+        hand.strength = Math.max(
+          0,
+          Math.min(1, hand.strength)
+        );
 
         if (!hand.visible) {
           motion *= 0.95;
@@ -792,7 +805,7 @@
 
       async function trackHand(now) {
         if (
-          !started ||
+          !isStreaming ||
           !hands ||
           trackingBusy ||
           now - lastTrackingTime < TRACKING_INTERVAL ||
@@ -813,13 +826,11 @@
         }
       }
 
-      let previousFrameTime = 0;
-
       function render(now) {
         requestAnimationFrame(render);
 
         if (
-          !started ||
+          !isStreaming ||
           !gl ||
           video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA
         ) {
@@ -874,9 +885,9 @@
       }
 
       async function startExperience() {
-        if (starting || started) return;
+        if (isStarting || isStreaming) return;
 
-        starting = true;
+        isStarting = true;
         startButton.disabled = true;
         startButton.textContent = "Starting...";
         setStatus("");
@@ -884,7 +895,7 @@
         try {
           if (!window.isSecureContext) {
             throw new Error(
-              "This needs HTTPS. Camera access does not work on insecure hosting."
+              "This page must be hosted through HTTPS for camera access."
             );
           }
 
@@ -906,31 +917,33 @@
               "Camera permission was denied. Enable it in browser settings, then reload."
             );
           } else if (error.name === "NotFoundError") {
-            setStatus("No camera was found on this device.");
+            setStatus("No working camera was found.");
           } else {
-            setStatus(error.message || "Could not start the experience.");
+            setStatus(
+              error.message || "Could not start the experience."
+            );
           }
         } finally {
-          starting = false;
+          isStarting = false;
           startButton.disabled = false;
           startButton.textContent = "Start Experience";
         }
       }
 
       async function flipCamera() {
-        if (starting) return;
+        if (isStarting) return;
 
         facingMode =
           facingMode === "user"
             ? "environment"
             : "user";
 
-        if (!started) return;
+        if (!isStreaming) return;
 
         try {
           await startCamera();
         } catch (error) {
-          console.error(error);
+          console.error("Camera flip error:", error);
           setStatus("Could not switch camera.");
         }
       }
